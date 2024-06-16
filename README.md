@@ -162,1068 +162,258 @@ Créez un nouvel environnement virtuel avec la commande `conda create -n nom_de_
 
 **Fichier requirements.txt**
 
-Créez un fichier `requirements.txt` en ouvrant un éditeur de texte tel que VS Code ou Sublime Text. Dans ce fichier, listez les bibliothèques nécessaires avec leurs versions respectives. Voici un exemple de contenu pour `requirements.txt` :
+Pour installer les dépendances listées dans `requirements.txt`, utilisez la commande `pip install -r requirements.txt`. Vérifiez ensuite que toutes les bibliothèques ont été installées correctement. En cas d'erreur d'installation, vérifiez les versions des bibliothèques pour résoudre les conflits potentiels et consultez la documentation spécifique des bibliothèques concernées pour des solutions précises. Si nécessaire, mettez à jour les bibliothèques avec la commande `pip install --upgrade nom_de_la_bibliothèque`.
 
 ```
 crewai
 python-dotenv
 crewai_tools
-langchain_openai
-langchain_community
-langchain_huggingface
+load_dotenv
 ```
 
 Chaque bibliothèque a un rôle spécifique :
 - **CrewAI** : Pour la gestion des agents et des tâches.
 - **python-dotenv** : Pour la gestion des variables d'environnement.
 - **crewai_tools** : Pour des outils supplémentaires liés à CrewAI.
-- **langchain_openai** : Pour l'intégration avec OpenAI.
-- **langchain_community** : Pour les outils communautaires de Langchain.
-- **langchain_huggingface** : Pour l'intégration avec Hugging Face.
-
-**Installation des bibliothèques nécessaires**
-
-Pour installer les dépendances listées dans `requirements.txt`, utilisez la commande `pip install -r requirements.txt`. Vérifiez ensuite que toutes les bibliothèques ont été installées correctement. En cas d'erreur d'installation, vérifiez les versions des bibliothèques pour résoudre les conflits potentiels et consultez la documentation spécifique des bibliothèques concernées pour des solutions précises. Si nécessaire, mettez à jour les bibliothèques avec la commande `pip install --upgrade nom_de_la_bibliothèque`.
+- **load_dotenv** : Fonction de la bibliothèque **python-dotenv** permettant de charger les variables d'environnement à partir d'un fichier `.env`.
 
 
 
-## Création des Agents
 
-### Définition de l'agent de recherche
+---
 
-**Rôle : Chercheur de contenu de blog**
+# Présentation du code du projet étape par étape
 
-L'agent de recherche est responsable de l'exploration et de l'analyse des vidéos YouTube pour extraire le contenu pertinent destiné aux articles de blog. Ce rôle nécessite une expertise en analyse de données ainsi qu'une compréhension approfondie des sujets abordés dans les vidéos, notamment l'intelligence artificielle et la data science.
+Ce projet utilise le framework Crew AI pour sélectionner des vidéos d'une chaîne YouTube en fonction d'une thématique donnée, puis transformer ces vidéos en articles de blog.
 
-**Objectif : Trouver des vidéos pertinentes sur YouTube**
+## Structure du projet
 
-L'agent doit identifier des vidéos alignées avec le sujet du blog. Les critères de pertinence incluent l'alignement avec le sujet, la popularité et l'engagement des vidéos, ainsi que la qualité et la profondeur du contenu. Le processus de recherche implique l'utilisation d'outils de recherche YouTube pour extraire et analyser les transcriptions vidéo.
+Le projet est structuré en plusieurs fichiers principaux, listés dans l'ordre de réalisation logique :
 
-**Paramètres : mémoire, verbosité, outils**
+1. `requirements.txt`
+2. `tools.py`
+3. `agents.py`
+4. `tasks.py`
+5. `crew.py`
 
-- **Mémoire (memory)** : L'agent conserve les informations extraites pour une utilisation future, assurant la persistance des données pour améliorer les performances.
-- **Verbosité (verbose)** : Le niveau de détail dans les sorties de l'agent est crucial pour le débogage et la vérification des processus.
-- **Outils** : 
-  - **YouTubeChannelSearchTool** : Cet outil permet de rechercher des vidéos sur un canal YouTube spécifique, initialisé avec le handle du canal.
+### 1. `requirements.txt`
 
-### Définition de l'agent de rédaction
+Liste des dépendances nécessaires pour le projet.
 
-**Rôle : Rédacteur de contenu**
+```
+crewai
+python-dotenv
+crewai_tools
+load_dotenv
+```
 
-L'agent de rédaction est chargé de rédiger des articles de blog basés sur le contenu vidéo fourni par l'agent de recherche. Il crée des narratives captivantes et informatives, rendant les sujets complexes accessibles et intéressants pour les lecteurs.
+### 2. `tools.py`
 
-**Objectif : Rédiger des articles de blog captivants**
-
-L'agent de rédaction doit produire des articles clairs et fluides, précis et exacts, tout en engageant les lecteurs. Le processus de rédaction commence par la réception des informations de l'agent de recherche, suivie de la structuration et de la rédaction de l'article.
-
-**Paramètres : mémoire, verbosité, outils**
-
-- **Mémoire (memory)** : L'agent conserve les drafts et les révisions pour une consultation ultérieure, améliorant ainsi la cohérence des articles.
-- **Verbosité (verbose)** : Les détails des logs et des messages de sortie sont utilisés pour le suivi du processus, le contrôle de qualité et l'optimisation des performances.
-- **Outils** :
-  - **YouTubeChannelSearchTool** : Cet outil utilise les transcriptions et les résumés fournis par l'agent de recherche, adapté aux besoins spécifiques de la rédaction.
-
-Ces agents, une fois configurés et activés, travailleront en tandem pour automatiser la création de blogs à partir de vidéos YouTube, chacun apportant son expertise spécifique au processus global.
-
-
-
-## Configuration des Outils
-
-### Introduction des outils nécessaires
-
-**Rôle des outils dans CrewAI**
-
-Les outils jouent un rôle essentiel dans CrewAI en facilitant les tâches des agents et en intégrant des fonctionnalités spécifiques nécessaires à l'exécution des processus automatisés. Ils permettent aux agents de rechercher des informations, de transcrire du contenu, et de traiter des textes, améliorant ainsi l'efficacité globale du système.
-
-**Types d'outils utilisés**
-
-- **Outils de recherche** : Utilisés pour explorer et identifier des informations pertinentes sur le web.
-- **Outils de transcription** : Utilisés pour convertir des contenus audio et vidéo en texte.
-- **Outils de traitement de texte** : Utilisés pour formater et structurer le contenu textuel.
-
-**Importance des outils**
-
-Les outils sont cruciaux pour l'automatisation des processus manuels, ce qui permet non seulement de gagner du temps mais aussi d'améliorer l'efficacité et la précision des agents. En utilisant des outils spécifiques, les agents peuvent effectuer des tâches complexes de manière plus rapide et avec moins d'erreurs.
-
-### Exemple : Outil de recherche de chaînes YouTube
-
-**Présentation de l'outil**
-
-- **Nom de l'outil** : YouTubeChannelSearchTool
-- **Fonction principale** : Rechercher des vidéos sur une chaîne YouTube spécifique.
-
-**Fonctionnement de l'outil**
-
-**Initialisation**
-
-L'outil est configuré avec le handle de la chaîne YouTube. Par exemple :
+Ce fichier initialise l'outil de recherche de chaînes YouTube utilisé par les agents.
 
 ```python
 from crewai_tools import YoutubeChannelSearchTool
-tool = YoutubeChannelSearchTool(youtube_channel_handle='@krishnaik06')
+
+# Initialiser l'outil avec un handle spécifique de chaîne YouTube
+yt_tool = YoutubeChannelSearchTool(youtube_channel_handle='@pierrebittner')
 ```
 
-**Recherche et extraction**
+### 3. `agents.py`
 
-L'outil est utilisé pour rechercher des vidéos pertinentes sur la chaîne et pour extraire des transcriptions et des métadonnées des vidéos.
+Ce fichier définit les agents utilisés dans le processus.
 
-### Intégration avec les agents
-
-**Agent de recherche**
-
-L'agent de recherche utilise l'outil YouTubeChannelSearchTool pour identifier et analyser les vidéos pertinentes. Par exemple :
+- **Chercheur de contenu** (`researcher`) : Cet agent est responsable de la recherche de contenu vidéo pertinent sur YouTube.
+- **Rédacteur** (`writer`) : Cet agent est chargé de transformer le contenu des vidéos en articles de blog captivants.
 
 ```python
 from crewai import Agent
-from tools import tool
-
-researcher = Agent(
-  role='Blogs Creator from Youtube Videos',
-  goal='provide the relevant video suggestions for the topic {topic}',
-  verbose=True,
-  memory=True,
-  backstory=(
-    "Expert in understanding videos in AI Data Science, Machine Learning and GEN AI and providing suggestions"
-  ),
-  tools=[tool],
-  allow_delegation=True
-)
-```
-
-**Agent de rédaction**
-
-L'agent de rédaction utilise les résultats de l'outil de recherche pour rédiger des articles de blog. Par exemple :
-
-```python
-writer = Agent(
-  role='Writer',
-  goal='Narrate compelling tech stories about the video {topic}',
-  verbose=True,
-  memory=True,
-  backstory=(
-    "With a flair for simplifying complex topics, you craft"
-    "engaging narratives that captivate and educate, bringing new"
-    "discoveries to light in an accessible manner."
-  ),
-  tools=[tool],
-  allow_delegation=False
-)
-```
-
-### Personnalisation et extension
-
-**Ajout de nouvelles fonctionnalités**
-
-L'outil peut être étendu pour inclure des fonctionnalités supplémentaires, comme l'intégration avec une API de transcription pour améliorer l'extraction de contenu. Par exemple :
-
-```python
-from crewai_tools import YoutubeChannelSearchTool, TranscriptionTool
-
-search_tool = YoutubeChannelSearchTool(youtube_channel_handle='@krishnaik06')
-transcription_tool = TranscriptionTool(api_key='your_api_key')
-
-researcher = Agent(
-  role='Blogs Creator from Youtube Videos',
-  goal='provide the relevant video suggestions for the topic {topic}',
-  verbose=True,
-  memory=True,
-  backstory=(
-    "Expert in understanding videos in AI Data Science, Machine Learning and GEN AI and providing suggestions"
-  ),
-  tools=[search_tool, transcription_tool],
-  allow_delegation=True
-)
-```
-
-**Configuration avancée**
-
-Il est possible de paramétrer l'outil pour des recherches spécifiques, par exemple en filtrant les vidéos par date de publication, nombre de vues, etc., pour affiner les résultats et répondre à des besoins particuliers.
-
-
-
-
-
-## Définition des Tâches
-
-### Tâche de recherche
-
-**Description : Identifier et analyser les vidéos YouTube**
-
-La tâche de recherche consiste à identifier les vidéos pertinentes sur la chaîne YouTube et à analyser leur contenu pour extraire des informations clés. Cette tâche a pour objectifs d'identifier les vidéos alignées avec le sujet spécifié, d'analyser le contenu pour extraire les points clés, et de synthétiser les informations obtenues.
-
-**Objectifs de la tâche**
-
-- Identifier les vidéos pertinentes sur la chaîne YouTube.
-- Analyser le contenu des vidéos pour extraire des informations clés.
-
-**Processus de réalisation**
-
-1. **Recherche des vidéos** : L'agent utilise des outils de recherche pour trouver des vidéos en fonction du sujet spécifié.
-2. **Extraction et analyse des transcriptions** : Utilisation d'outils pour extraire les transcriptions des vidéos et analyser le contenu.
-3. **Synthèse des informations** : Compilation des informations extraites en un rapport structuré.
-
-**Résultat attendu : Rapport détaillé**
-
-Le rapport détaillé résume les vidéos analysées, présente les points clés et fournit des recommandations basées sur le contenu vidéo.
-
-- **Contenu du rapport**
-  - Résumé des vidéos analysées.
-  - Points clés et informations importantes.
-  - Insights et recommandations.
-
-- **Format du rapport**
-  Le rapport est structuré en paragraphes avec des sections pour organiser les informations. Exemple de format de rapport :
-
-  ```markdown
-  # Rapport de Recherche
-  ## Vidéo 1 : Titre de la Vidéo
-  - **Résumé :** Description succincte de la vidéo
-  - **Points Clés :** Liste des informations importantes
-  - **Recommandations :** Suggestions basées sur le contenu
-
-  ## Vidéo 2 : Titre de la Vidéo
-  - **Résumé :** Description succincte de la vidéo
-  - **Points Clés :** Liste des informations importantes
-  - **Recommandations :** Suggestions basées sur le contenu
-  ```
-
-**Outils utilisés**
-
-- **YouTubeChannelSearchTool**
-  - Fonction : Recherche de vidéos sur la chaîne YouTube.
-  - Configuration : Initialisation avec le handle de la chaîne.
-- **TranscriptionTool**
-  - Fonction : Extraction des transcriptions des vidéos.
-  - Configuration : API clé pour l'accès.
-
-### Tâche de rédaction
-
-**Description : Rédiger un article de blog basé sur les vidéos**
-
-La tâche de rédaction implique de créer un article de blog informatif et captivant en utilisant les informations fournies par l'agent de recherche. Cette tâche a pour objectifs d'analyser le rapport de l'agent de recherche, de structurer l'article, et de rédiger un contenu attrayant et précis.
-
-**Objectifs de la tâche**
-
-- Utiliser les informations fournies par l'agent de recherche.
-- Créer un article de blog informatif et captivant.
-
-**Processus de réalisation**
-
-1. **Réception et analyse du rapport** : L'agent de rédaction reçoit et analyse le rapport de l'agent de recherche.
-2. **Structuration de l'article** : Organisation de l'article en sections logiques et cohérentes.
-3. **Rédaction et révision** : Rédaction du contenu, suivie d'une révision pour assurer la qualité et la précision.
-
-**Résultat attendu : Article formaté en markdown**
-
-L'article doit être clair, informatif, et bien structuré, en utilisant le format markdown pour la mise en forme.
-
-- **Contenu de l'article**
-  - Introduction au sujet.
-  - Développement des points clés extraits des vidéos.
-  - Conclusion et perspectives.
-
-- **Format de l'article**
-  Exemple de format d'article en markdown :
-
-  ```markdown
-  # Titre de l'Article
-  ## Introduction
-  Introduction au sujet abordé dans les vidéos.
-
-  ## Développement
-  ### Point Clé 1
-  Description et explication du premier point clé.
-
-  ### Point Clé 2
-  Description et explication du deuxième point clé.
-
-  ## Conclusion
-  Résumé des points discutés et perspectives futures.
-  ```
-
-**Outils utilisés**
-
-- **MarkdownEditorTool**
-  - Fonction : Rédaction et formatage de l'article en markdown.
-  - Configuration : Paramètres pour le style et la mise en page.
-- **ContentReviewTool**
-  - Fonction : Vérification et révision du contenu rédigé.
-  - Configuration : Critères de qualité et de cohérence.
-
-
-
-
-## Exécution du Processus
-
-### Configuration du processus séquentiel
-
-**Définition du processus séquentiel**
-
-Un processus séquentiel exécute les tâches dans un ordre défini où chaque tâche doit être complétée avant de passer à la suivante. Ce type de processus simplifie la gestion des dépendances entre les tâches et réduit les risques de conflits ou d'incohérences.
-
-**Avantages du processus séquentiel**
-
-- Simplification de la gestion des dépendances entre les tâches.
-- Réduction des risques de conflits ou d'incohérences.
-
-**Paramètres de configuration**
-
-**Agents impliqués**
-
-Les agents impliqués dans ce processus sont définis comme suit : un chercheur et un rédacteur. Voici un exemple de configuration :
-
-```python
-from crewai import Crew, Process
-from agents import researcher, writer
-from task import research_task, write_task
-
-crew = Crew(
-  agents=[researcher, writer],
-  tasks=[research_task, write_task],
-  process=Process.sequential,  # Définition du processus séquentiel
-  memory=True,
-  cache=True,
-  max_rpm=100,
-  share_crew=True
-)
-```
-
-**Processus séquentiel**
-
-Le processus est configuré pour une exécution séquentielle en utilisant l'option `Process.sequential`.
-
-### Initialisation et exécution des tâches
-
-**Préparation des agents et des tâches**
-
-**Importation des modules nécessaires**
-
-Les agents et les tâches définis précédemment doivent être importés :
-
-```python
-from agents import researcher, writer
-from task import research_task, write_task
-```
-
-**Initialisation des agents**
-
-Les agents (chercheur et rédacteur) sont créés et configurés :
-
-```python
-researcher = Agent(...)
-writer = Agent(...)
-```
-
-**Initialisation des tâches**
-
-Les tâches (recherche et rédaction) sont créées et configurées :
-
-```python
-research_task = Task(...)
-write_task = Task(...)
-```
-
-**Lancement du processus**
-
-**Exécution des tâches**
-
-La méthode `kickoff` est utilisée pour démarrer le processus :
-
-```python
-result = crew.kickoff(inputs={'topic': 'AI vs ML VS DL VS Data Science'})
-print(result)
-```
-
-**Suivi et monitoring**
-
-L'état d'avancement des tâches est vérifié en utilisant des logs et des messages de sortie pour assurer le suivi du processus.
-
-### Gestion des erreurs et des clés API
-
-**Gestion des erreurs**
-
-**Types d'erreurs possibles**
-
-- Erreurs de configuration (ex. : paramètres incorrects).
-- Erreurs d'exécution (ex. : échec d'une tâche).
-
-**Stratégies de gestion des erreurs**
-
-Des mécanismes de détection et de gestion des erreurs doivent être mis en place. Voici un exemple de gestion des erreurs :
-
-```python
-try:
-  result = crew.kickoff(inputs={'topic': 'AI vs ML VS DL VS Data Science'})
-  print(result)
-except Exception as e:
-  print(f"Erreur lors de l'exécution : {e}")
-```
-
-**Gestion des clés API**
-
-**Utilisation des variables d'environnement**
-
-Les clés API doivent être stockées dans un fichier `.env` et chargées au démarrage du script :
-
-```python
+from tools import yt_tool
 from dotenv import load_dotenv
 load_dotenv()
 
 import os
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
-```
-
-**Sécurité et bonnes pratiques**
-
-Pour garantir la sécurité, les clés API ne doivent jamais être exposées dans le code source. L'utilisation de bibliothèques comme `python-dotenv` permet de gérer les variables d'environnement de manière sécurisée.
-
-
-
-
-## Finalisation et Résultats
-
-### Vérification du fichier de sortie
-
-**Accès au fichier de sortie**
-
-Une fois le processus de création du blog terminé, le fichier de sortie est généré et enregistré dans le dossier spécifié lors de la configuration. Par exemple, le chemin du fichier pourrait être `./output/new-blog-post.md`. Pour ouvrir et inspecter le fichier, vous pouvez utiliser un éditeur de texte ou un visualiseur de markdown. Voici une commande pour afficher le contenu du fichier dans le terminal :
-
-```bash
-cat ./output/new-blog-post.md
-```
-
-**Validation du contenu**
-
-Pour s'assurer que le contenu généré répond aux attentes, il est important de vérifier plusieurs aspects :
-
-**Conformité avec les attentes**
-
-Le contenu doit correspondre au sujet spécifié et aux critères de qualité définis. Cela inclut la vérification de la précision des informations et de leur pertinence par rapport au sujet traité.
-
-**Structure et format**
-
-La structure du document doit être claire et bien organisée, avec des titres et des sections appropriés. La mise en forme markdown doit être validée pour s'assurer qu'elle est correcte et cohérente. Voici un exemple de structure de document attendu :
-
-```markdown
-# Titre de l'Article
-## Introduction
-Introduction au sujet abordé dans les vidéos.
-
-## Développement
-### Point Clé 1
-Description et explication du premier point clé.
-
-### Point Clé 2
-Description et explication du deuxième point clé.
-
-## Conclusion
-Résumé des points discutés et perspectives futures.
-```
-
-Cette vérification permet de garantir que le blog généré est conforme aux standards de qualité et qu'il est prêt à être publié.
-
-
-
-
-
-
-
-# Revue de code : 
-
-
-### Objectifs et Logique de Fonctionnement
-
-L'objectif principal de ce projet est d'automatiser la création de blogs à partir de vidéos YouTube en utilisant la plateforme CrewAI. Pour ce faire, le projet utilise des agents pour rechercher des vidéos, extraire leur contenu et rédiger des articles de blog. La logique de fonctionnement repose sur l'utilisation d'outils spécifiques pour chaque tâche et la définition claire des rôles et des objectifs de chaque agent.
-
-### Fichiers 
-
-#### 1. `requirements.txt`
-
-**But :** Définir et installer toutes les dépendances nécessaires pour le projet.
-
-**Contenu :**
-```plaintext
-crewai
-python-dotenv
-crewai_tools
-langchain_openai
-langchain_community
-langchain_huggingface
-```
-
-**Installation des dépendances :**
-Pour installer les dépendances listées dans `requirements.txt`, utilisez la commande suivante :
-```bash
-pip install -r requirements.txt
-```
-
-**Explication :**
-- `crewai` : Bibliothèque principale pour la gestion des agents et des tâches.
-- `python-dotenv` : Utilisé pour gérer les variables d'environnement de manière sécurisée.
-- `crewai_tools` : Outils supplémentaires pour CrewAI.
-- `langchain_openai`, `langchain_community`, `langchain_huggingface` : Intégrations et outils pour utiliser les modèles de Langchain et Hugging Face.
-
-
-#### 2. `agents.py`
-
-**But :** Définir les agents de recherche et de rédaction avec les outils appropriés.
-
-**Code :**
-```python
-from crewai import Agent
-from tools import tool
+os.environ["OPENAI_MODEL_NAME"] = "gpt-4o"
 
 # Création d'un agent récupérateur de contenu avec mémoire et mode verbeux
 researcher = Agent(
-  role='Blogs Creator from Youtube Videos',
-  goal='provide the relevant video suggestions for the topic {topic}',
-  verbose=True,
-  memory=True,
-  backstory=(
-    "Expert in understanding videos in AI Data Science, Machine Learning and GEN AI and providing suggestions"
-  ),
-  tools=[tool],
-  allow_delegation=True
+    role='Chercheur de contenu de blogs à partir de vidéos YouTube',
+    goal='Obtenir le contenu vidéo pertinent pour le sujet {topic} à partir de la chaîne YouTube',
+    verbose=True,
+    memory=True,
+    backstory=(
+        "Expert dans la compréhension des vidéos sur l'IA, l'apprentissage automatique et l'IA générative, "
+        "et fournissant des suggestions pertinentes."
+    ),
+    tools=[yt_tool],
+    allow_delegation=True
 )
 
-# Création d'un agent rédacteur avec des outils personnalisés et capacité de délégation
+# Création d'un agent rédacteur
 writer = Agent(
-  role='Writer',
-  goal='Narrate compelling tech stories about the video {topic}',
-  verbose=True,
-  memory=True,
-  backstory=(
-    "With a flair for simplifying complex topics, you craft"
-    "engaging narratives that captivate and educate, bringing new"
-    "discoveries to light in an accessible manner."
-  ),
-  tools=[tool],
-  allow_delegation=False
+    role='Rédacteur',
+    goal='Raconter des histoires technologiques captivantes sur la vidéo {topic}',
+    verbose=True,
+    memory=True,
+    backstory=(
+        "Avec un talent pour simplifier les sujets complexes, vous créez des récits engageants qui captivent "
+        "et éduquent, mettant en lumière de nouvelles découvertes de manière accessible."
+    ),
+    tools=[yt_tool],
+    allow_delegation=False
 )
 ```
 
-**Explication :**
+### 4. `tasks.py`
 
-**Création des agents :**
-- **Agent de recherche (researcher)** :
-  - **Rôle** : Chercheur de contenu de blog.
-  - **Objectif** : Fournir des suggestions de vidéos pertinentes pour un sujet spécifié.
-  - **Attributs** :
-    - `verbose=True` : Mode verbeux pour des sorties détaillées.
-    - `memory=True` : Utilisation de la mémoire pour conserver les informations.
-    - `tools=[tool]` : Utilisation de l'outil de recherche de chaînes YouTube.
-    - `allow_delegation=True` : Permet la délégation des tâches à d'autres agents.
-  
-**Agent de rédaction (writer)** :
-  - **Rôle** : Rédacteur de contenu.
-  - **Objectif** : Rédiger des articles de blog captivants basés sur les vidéos.
-  - **Attributs** :
-    - `verbose=True` : Mode verbeux pour des sorties détaillées.
-    - `memory=True` : Utilisation de la mémoire pour conserver les informations.
-    - `tools=[tool]` : Utilisation de l'outil de recherche de chaînes YouTube.
-    - `allow_delegation=False` : Ne permet pas la délégation des tâches.
+Ce fichier définit les tâches spécifiques que les agents doivent accomplir.
 
-
-
-
-#### 3. `tools.py`
-
-**But :** Définir les outils nécessaires pour les agents.
-
-**Code :**
-```python
-from crewai_tools import YoutubeChannelSearchTool
-
-# Initialiser l'outil avec un handle spécifique de chaîne YouTube
-tool = YoutubeChannelSearchTool(youtube_channel_handle='@krishnaik06')
-```
-
-**Explication :**
-- **Importation du module** : `YoutubeChannelSearchTool` est importé depuis `crewai_tools`.
-- **Initialisation de l'outil** : Un objet `YoutubeChannelSearchTool` est créé et configuré pour rechercher des vidéos sur la chaîne YouTube spécifiée par le handle `@krishnaik06`.
-
-
-## 4. `task.py`
-
-L'objectif de ce fichier est de définir les tâches que les agents devront exécuter. Ces tâches comprennent la recherche de vidéos pertinentes sur YouTube et la rédaction d'articles de blog basés sur le contenu de ces vidéos. Le fichier `task.py` crée deux tâches distinctes : une tâche de recherche et une tâche de rédaction, chacune avec des objectifs et des configurations spécifiques.
-
-### Fonctionnement des Tâches
-
-#### 1. Importation des modules nécessaires
-
-Le fichier commence par importer les classes et outils nécessaires pour définir les tâches.
+- **Recherche** (`research_task`) : Identifier et analyser les vidéos YouTube pertinentes pour un sujet donné.
+- **Rédaction** (`write_task`) : Résumer les informations obtenues des vidéos pour créer un article de blog.
 
 ```python
 from crewai import Task
-from tools import tool
-from agents import researcher, writer
-```
-
-- **`Task`** : Classe fournie par CrewAI pour définir des tâches.
-- **`tool`** : Outil défini dans `tools.py` pour rechercher des vidéos sur YouTube.
-- **`researcher` et `writer`** : Agents définis dans `agents.py` pour exécuter les tâches.
-
-#### 2. Définition de la tâche de recherche
-
-La tâche de recherche est responsable de l'identification et de l'analyse des vidéos YouTube pertinentes.
-
-```python
-# Tâche de recherche
-research_task = Task(
-  description=(
-    "Identify the video {topic}."
-    "Get detailed information about the video from the channel."
-  ),
-  expected_output='A comprehensive 3 paragraphs long report based on the {topic} of video content.',
-  tools=[tool],
-  agent=researcher,
-)
-```
-
-- **Description** : La tâche consiste à identifier des vidéos sur un sujet spécifié et à obtenir des informations détaillées sur ces vidéos.
-- **Résultat attendu** : Un rapport complet de trois paragraphes basé sur le contenu vidéo du sujet spécifié.
-- **Outils utilisés** : L'outil de recherche de chaînes YouTube défini dans `tools.py`.
-- **Agent** : L'agent de recherche (`researcher`) défini dans `agents.py`.
-
-#### 3. Définition de la tâche de rédaction
-
-La tâche de rédaction consiste à rédiger des articles de blog en utilisant les informations fournies par la tâche de recherche.
-
-```python
-# Tâche de rédaction avec configuration du modèle de langage
-write_task = Task(
-  description=(
-    "get the info from the youtube channel on the topic {topic}."
-  ),
-  expected_output='Summarize the info from the youtube channel video on the topic {topic}',
-  tools=[tool],
-  agent=writer,
-  async_execution=False,
-  output_file='new-blog-post.md'  # Exemple de personnalisation de sortie
-)
-```
-
-- **Description** : La tâche consiste à obtenir des informations sur le sujet spécifié à partir des vidéos YouTube et à les résumer.
-- **Résultat attendu** : Un résumé des informations des vidéos YouTube sur le sujet spécifié.
-- **Outils utilisés** : L'outil de recherche de chaînes YouTube.
-- **Agent** : L'agent de rédaction (`writer`).
-- **Exécution asynchrone** : Configuré à `False` pour exécuter la tâche de manière séquentielle.
-- **Fichier de sortie** : `new-blog-post.md` pour stocker l'article de blog généré.
-
-### Code complet de `task.py`
-
-```python
-from crewai import Task
-from tools import tool
+from tools import yt_tool
 from agents import researcher, writer
 
 # Tâche de recherche
-# Cette tâche a pour but d'identifier et d'analyser les vidéos YouTube pertinentes.
 research_task = Task(
     description=(
-        "Identifier la vidéo {topic}."
-        "Obtenir des informations détaillées sur la vidéo depuis la chaîne."
+        "Identifier la vidéo sur le sujet {topic}. "
+        "Obtenir des informations détaillées sur la vidéo depuis la chaîne YouTube."
     ),
     expected_output='Un rapport complet de 3 paragraphes basé sur le contenu vidéo du sujet {topic}.',
-    tools=[tool],  # Utilisation de l'outil de recherche de chaînes YouTube
+    tools=[yt_tool],  # Utilisation de l'outil de recherche de chaînes YouTube
     agent=researcher,  # Agent responsable de cette tâche
 )
 
 # Tâche de rédaction avec configuration du modèle de langage
-# Cette tâche consiste à résumer les informations obtenues des vidéos YouTube pour créer un article de blog.
 write_task = Task(
     description=(
-        "Obtenir les informations de la chaîne YouTube sur le sujet {topic}."
+        "Utiliser les informations de la chaîne YouTube sur le sujet {topic} "
+        "et rédiger un article de blog."
     ),
-    expected_output='Résumé des informations de la vidéo YouTube sur le sujet {topic}.',
-    tools=[tool],  # Utilisation de l'outil de recherche de chaînes YouTube
+    expected_output='Résumé des informations de la vidéo YouTube sur le sujet {topic} et création d\'un article de blog.',
+    tools=[yt_tool],  # Utilisation de l'outil de recherche de chaînes YouTube
     agent=writer,  # Agent responsable de cette tâche
     async_execution=False,  # Exécution séquentielle de la tâche
     output_file='new-blog-post.md'  # Fichier de sortie pour l'article de blog
 )
 ```
 
-Le fichier `task.py` définit deux tâches principales à l'aide de la classe `Task` de CrewAI. La tâche de recherche, exécutée par l'agent `researcher`, a pour but d'identifier et d'analyser des vidéos pertinentes sur YouTube en fonction d'un sujet donné, en utilisant l'outil `YoutubeChannelSearchTool`. La tâche produit un rapport détaillé de trois paragraphes.
+### 5. `crew.py`
 
-La tâche de rédaction, réalisée par l'agent `writer`, consiste à rédiger un article de blog basé sur les informations obtenues par la tâche de recherche. Cette tâche utilise également l'outil `YoutubeChannelSearchTool` pour extraire les transcriptions et les résumer. Le résultat est un article de blog formaté en markdown, stocké dans le fichier `new-blog-post.md`.
-
-Chaque tâche est configurée avec des paramètres spécifiques pour assurer une exécution fluide et efficace, en suivant un processus séquentiel pour garantir que chaque étape est complétée avant de passer à la suivante.
-
-
-## 5. app.py
-
-
-L'objectif principal du fichier `app.py` est de configurer l'environnement, initialiser les agents et les tâches, puis exécuter un processus séquentiel pour automatiser la recherche et la rédaction de contenu basé sur des vidéos YouTube. Ce fichier utilise plusieurs bibliothèques et outils pour configurer les agents avec des capacités spécifiques et lancer le processus de manière orchestrée.
-
-
-#### 1. Importation et configuration de l'environnement
-
-
-**Code :**
-```python
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
-os.environ["OPENAI_API_KEY"] = ""
-```
-
-**Explication :**
-- **Chargement des variables d'environnement** : Utilisation de `load_dotenv()` pour charger les variables d'environnement à partir d'un fichier `.env`.
-- **Configuration des tokens API** : Les tokens pour Hugging Face et OpenAI sont définis dans les variables d'environnement.
-
-#### 2. Configuration du modèle de langage
-
-**But :** Configurer un modèle de langage depuis Hugging Face.
-
-**Code :**
-```python
-from langchain_community.llms import HuggingFaceHub
-
-repo_id = "mistralai/Mistral-7B-Instruct-v0.2"  # Voir https://huggingface.co/models?pipeline_tag=text-generation&sort=downloads pour d'autres options
-llm = HuggingFaceHub(
-    repo_id=repo_id, model_kwargs={"temperature": 0.5, "max_tokens": 4096}
-)
-```
-
-**Explication :**
-- **Importation du modèle** : Utilisation de `HuggingFaceHub` pour configurer le modèle de langage.
-- **Configuration du modèle** : Le modèle est configuré avec un `repo_id` spécifique et des paramètres de modèle (`temperature` et `max_tokens`).
-
-#### 3. Création des agents
-
-**But :** Définir et configurer les agents de recherche et de rédaction.
-
-**Code :**
-```python
-from crewai import Agent
-from crewai_tools import SerperDevTool
-
-search_tool = SerperDevTool()
-
-# Création d'un agent chercheur senior avec mémoire et mode verbeux
-researcher = Agent(
-    role='Senior Researcher',
-    goal='Uncover groundbreaking technologies in {topic}',
-    verbose=True,
-    memory=True,
-    backstory=(
-        "Driven by curiosity, you're at the forefront of"
-        "innovation, eager to explore and share knowledge that could change"
-        "the world."
-    ),
-    tools=[search_tool],
-    llm=llm,
-    allow_delegation=True
-)
-
-# Création d'un agent rédacteur avec des outils personnalisés et capacité de délégation
-writer = Agent(
-    role='Writer',
-    goal='Narrate compelling tech stories about {topic}',
-    verbose=True,
-    memory=True,
-    backstory=(
-        "With a flair for simplifying complex topics, you craft"
-        "engaging narratives that captivate and educate, bringing new"
-        "discoveries to light in an accessible manner."
-    ),
-    tools=[search_tool],
-    llm=llm,
-    allow_delegation=False
-)
-```
-
-**Explication :**
-- **Création de l'agent de recherche (researcher)** :
-  - **Rôle** : Chercheur senior.
-  - **Objectif** : Découvrir des technologies révolutionnaires sur un sujet spécifique.
-  - **Attributs** : Mode verbeux, mémoire activée, utilisation de `SerperDevTool` et du modèle de langage configuré.
-- **Création de l'agent de rédaction (writer)** :
-  - **Rôle** : Rédacteur.
-  - **Objectif** : Rédiger des articles captivants sur un sujet spécifique.
-  - **Attributs** : Mode verbeux, mémoire activée, utilisation de `SerperDevTool` et du modèle de langage configuré.
-
-#### 4. Définition des tâches
-
-**But :** Définir les tâches de recherche et de rédaction.
-
-**Code :**
-```python
-from crewai import Task
-
-# Tâche de recherche
-research_task = Task(
-    description=(
-        "Identify the next big trend in {topic}."
-        "Focus on identifying pros and cons and the overall narrative."
-        "Your final report should clearly articulate the key points,"
-        "its market opportunities, and potential risks."
-    ),
-    expected_output='A comprehensive 3 paragraphs long report on the latest AI trends.',
-    tools=[search_tool],
-    agent=researcher,
-)
-
-# Tâche de rédaction avec configuration du modèle de langage
-write_task = Task(
-    description=(
-        "Compose an insightful article on {topic}."
-        "Focus on the latest trends and how it's impacting the industry."
-        "This article should be easy to understand, engaging, and positive."
-    ),
-    expected_output='A 4 paragraph article on {topic} advancements formatted as markdown.',
-    tools=[search_tool],
-    agent=writer,
-    async_execution=False,
-    output_file='new-blog-post.md'  # Exemple de personnalisation de sortie
-)
-```
-
-**Explication :**
-- **Tâche de recherche (research_task)** :
-  - **Description** : Identifier les prochaines grandes tendances en IA et rédiger un rapport détaillé.
-  - **Résultat attendu** : Un rapport complet de trois paragraphes sur les dernières tendances en IA.
-  - **Agent** : Utilisation de l'agent de recherche.
-- **Tâche de rédaction (write_task)** :
-  - **Description** : Composer un article perspicace sur un sujet spécifique en IA.
-  - **Résultat attendu** : Un article de quatre paragraphes formaté en markdown.
-  - **Agent** : Utilisation de l'agent de rédaction.
-  - **Exécution asynchrone** : Configuré à `False` pour exécuter la tâche de manière séquentielle.
-  - **Fichier de sortie** : `new-blog-post.md`.
-
-#### 5. Formation et exécution du processus
-
-**But :** Former l'équipe d'agents et exécuter les tâches de manière séquentielle.
-
-**Code :**
-```python
-from crewai import Crew, Process
-
-# Formation de l'équipe technique avec des configurations améliorées
-crew = Crew(
-    agents=[researcher, writer],
-    tasks=[research_task, write_task],
-    process=Process.sequential,  # Exécution séquentielle des tâches
-    memory=True,
-    cache=True,
-    max_rpm=100,
-    share_crew=True
-)
-
-# Lancement du processus d'exécution des tâches avec retour d'information amélioré
-result = crew.kickoff(inputs={'topic': 'AI in healthcare'})
-print(result)
-```
-
-**Explication :**
-- **Formation de l'équipe (crew)** :
-  - **Agents** : Inclusion des agents de recherche et de rédaction.
-  - **Tâches** : Inclusion des tâches de recherche et de rédaction.
-  - **Processus** : Exécution séquentielle des tâches pour garantir un ordre logique et éviter les conflits.
-- **Exécution du processus** :
-  - **Lancement** : Utilisation de `kickoff` pour démarrer le processus avec le sujet spécifié.
-  - **Affichage des résultats** : Les résultats de l'exécution sont imprimés.
-
----
-
-### code complet de `app.py`
-```python
-import os
-from dotenv import load_dotenv
-
-# Charger les variables d'environnement depuis le fichier .env
-load_dotenv()
-os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
-os.environ["OPENAI_API_KEY"] = ""
-
-from langchain_community.llms import HuggingFaceHub
-
-# Configuration du modèle de langage HuggingFaceHub
-repo_id = "mistralai/Mistral-7B-Instruct-v0.2"  # Voir https://huggingface.co/models?pipeline_tag=text-generation&sort=downloads pour d'autres options
-llm = HuggingFaceHub(
-    repo_id=repo_id, model_kwargs={"temperature": 0.5, "max_tokens": 4096}
-)
-
-from crewai import Agent
-from crewai_tools import SerperDevTool
-
-# Initialisation de l'outil de recherche
-search_tool = SerperDevTool()
-
-# Création d'un agent chercheur senior avec mémoire et mode verbeux
-researcher = Agent(
-    role='Senior Researcher',
-    goal='Uncover groundbreaking technologies in {topic}',
-    verbose=True,
-    memory=True,
-    backstory=(
-        "Driven by curiosity, you're at the forefront of"
-        "innovation, eager to explore and share knowledge that could change"
-        "the world."
-    ),
-    tools=[search_tool],
-    llm=llm,
-    allow_delegation=True
-)
-
-# Création d'un agent rédacteur avec des outils personnalisés et capacité de délégation
-writer = Agent(
-    role='Writer',
-    goal='Narrate compelling tech stories about {topic}',
-    verbose=True,
-    memory=True,
-    backstory=(
-        "With a flair for simplifying complex topics, you craft"
-        "engaging narratives that captivate and educate, bringing new"
-        "discoveries to light in an accessible manner."
-    ),
-    tools=[search_tool],
-    llm=llm,
-    allow_delegation=False
-)
-
-from crewai import Task
-
-# Tâche de recherche
-research_task = Task(
-    description=(
-        "Identify the next big trend in {topic}."
-        "Focus on identifying pros and cons and the overall narrative."
-        "Your final report should clearly articulate the key points,"
-        "its market opportunities, and potential risks."
-    ),
-    expected_output='A comprehensive 3 paragraphs long report on the latest AI trends.',
-    tools=[search_tool],
-    agent=researcher,
-)
-
-# Tâche de rédaction avec configuration du modèle de langage
-write_task = Task(
-    description=(
-        "Compose an insightful article on {topic}."
-        "Focus on the latest trends and how it's impacting the industry."
-        "This article should be easy to understand, engaging, and positive."
-    ),
-    expected_output='A 4 paragraph article on {topic} advancements formatted as markdown.',
-    tools=[search_tool],
-    agent=writer,
-    async_execution=False,
-    output_file='new-blog-post.md'  # Exemple de personnalisation de sortie
-)
-
-from crewai import Crew, Process
-
-# Formation de l'équipe technique avec des configurations améliorées
-crew = Crew(
-    agents=[researcher, writer],
-    tasks=[research_task, write_task],
-    process=Process.sequential,  # Exécution séquentielle des tâches
-    memory=True,
-    cache=True,
-    max_rpm=100,
-    share_crew=True
-)
-
-# Lancement du processus d'exécution des tâches avec retour d'information amélioré
-result = crew.kickoff(inputs={'topic': 'AI in healthcare'})
-print(result)
-```
-
-
-
-
-## 6. crew.py
-
-L'objectif principal du fichier `crew.py` est d'exécuter le processus en utilisant les agents et les tâches définis précédemment. Ce script configure une équipe (`crew`) composée des agents de recherche et de rédaction, puis lance le processus pour effectuer les tâches de manière séquentielle. Le résultat final est imprimé pour vérification.
-
-
-### Importation des modules nécessaires
-
-**But :** Importer les classes et objets nécessaires pour définir et exécuter le processus.
-
-**Code :**
-```python
-from crewai import Crew, Process
-from agents import researcher, writer
-from task import research_task, write_task
-```
-
-**Explication :**
-- **`Crew` et `Process`** : Importés depuis la bibliothèque `crewai`, ils permettent de former une équipe d'agents et de définir le type de processus d'exécution.
-- **`researcher` et `writer`** : Agents de recherche et de rédaction importés depuis le fichier `agents.py`.
-- **`research_task` et `write_task`** : Tâches de recherche et de rédaction importées depuis le fichier `task.py`.
-
-### Formation de l'équipe technique
-
-**But :** Configurer l'équipe d'agents avec des paramètres spécifiques pour l'exécution des tâches.
-
-**Code :**
-```python
-# Formation de l'équipe technique avec des configurations améliorées
-crew = Crew(
-    agents=[researcher, writer],
-    tasks=[research_task, write_task],
-    process=Process.sequential,  # Exécution séquentielle des tâches
-    memory=True,
-    cache=True,
-    max_rpm=100,
-    share_crew=True
-)
-```
-
-**Explication :**
-- **`agents`** : Liste des agents impliqués dans le processus, ici `researcher` et `writer`.
-- **`tasks`** : Liste des tâches à exécuter, ici `research_task` et `write_task`.
-- **`process`** : Définition du type de processus, ici `Process.sequential` pour une exécution séquentielle.
-- **`memory`** : Activée pour permettre aux agents de conserver les informations entre les tâches.
-- **`cache`** : Utilisé pour optimiser les performances en stockant temporairement les données.
-- **`max_rpm`** : Limite le nombre maximal de requêtes par minute à 100 pour éviter la surcharge.
-- **`share_crew`** : Permet de partager l'équipe d'agents entre différents processus.
-
-### Lancement du processus d'exécution des tâches
-
-**But :** Démarrer le processus d'exécution des tâches et imprimer les résultats.
-
-**Code :**
-```python
-# Lancement du processus d'exécution des tâches avec retour d'information amélioré
-result = crew.kickoff(inputs={'topic': 'AI vs ML VS DL VS Data Science'})
-print(result)
-```
-
-**Explication :**
-- **`kickoff`** : Méthode utilisée pour démarrer le processus avec les entrées spécifiées. Ici, le sujet est `AI vs ML VS DL VS Data Science`.
-- **`print(result)`** : Affiche le résultat de l'exécution du processus, permettant de vérifier le bon déroulement et le contenu généré.
-
----
-###  Code complet `crew.py`
-
-Ce fichier `crew.py` est conçu pour orchestrer l'exécution des tâches de recherche et de rédaction en utilisant les agents définis. Il permet de structurer le travail de manière séquentielle et de s'assurer que les informations sont traitées et stockées efficacement, garantissant ainsi une production de contenu cohérente et de haute qualité.
-
-
+Ce fichier configure et lance l'équipe d'agents et les tâches associées.
 
 ```python
 from crewai import Crew, Process
 from agents import researcher, writer
-from task import research_task, write_task
+from tasks import research_task, write_task
 
-# Formation de l'équipe technique avec des configurations améliorées
+# Formation de l'équipe technologique avec des configurations améliorées
 crew = Crew(
-    agents=[researcher, writer],  # Liste des agents impliqués dans le processus
-    tasks=[research_task, write_task],  # Liste des tâches à exécuter
-    process=Process.sequential,  # Exécution séquentielle des tâches (option par défaut)
-    memory=True,  # Activation de la mémoire pour conserver les informations entre les tâches
-    cache=True,  # Utilisation du cache pour optimiser les performances
-    max_rpm=100,  # Limite le nombre maximal de requêtes par minute à 100
-    share_crew=True  # Permet de partager l'équipe d'agents entre différents processus
+    agents=[researcher, writer],
+    tasks=[research_task, write_task],
+    process=Process.sequential,  # Optionnel : l'exécution séquentielle des tâches est par défaut
+    memory=True,
+    cache=True,
+    max_rpm=15,
+    share_crew=True
 )
 
-# Lancement du processus d'exécution des tâches avec retour d'information amélioré
-result = crew.kickoff(inputs={'topic': 'AI vs ML VS DL VS Data Science'})
+# Lancement du processus d'exécution des tâches avec des retours améliorés
+result = crew.kickoff(inputs={'topic': 'Agent RAG'})
 print(result)
 ```
+
+## Installation et utilisation
+
+1. **Clonez le dépôt :**
+    ```bash
+    git clone https://github.com/votre-utilisateur/votre-repo.git
+    cd votre-repo
+    ```
+
+2. **Installez les dépendances :**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3. **Configurez les variables d'environnement :**
+    - Créez un fichier `.env` à la racine du projet avec les clés API nécessaires :
+      ```
+      OPENAI_API_KEY=votre_cle_api_openai
+      ```
+
+4. **Lancez le programme :**
+    ```bash
+    python crew.py
+    ```
+
+## Contribuer
+
+Les contributions sont les bienvenues ! Veuillez suivre les étapes ci-dessous pour contribuer :
+
+1. **Fork** le projet.
+2. **Clone** votre fork.
+3. Créez une nouvelle branche (`git checkout -b feature/AmazingFeature`).
+4. Faites vos modifications.
+5. **Commit** vos changements (`git commit -m 'Add some AmazingFeature'`).
+6. **Push** vers la branche (`git push origin feature/AmazingFeature`).
+7. Ouvrez une **Pull Request**.
+
+## Licence
+
+Distribué sous la licence MIT
+
+
+
+
+
+
+
+
+
+
+# Bonnes pratiques
+
+
+### Cacher les clés API
+
+- **python-dotenv** : Cette bibliothèque permet de gérer les variables d'environnement en chargeant le contenu d'un fichier `.env` dans les variables d'environnement du système. Cela facilite la configuration des applications sans avoir à coder en dur des informations sensibles ou spécifiques à l'environnement, comme les clés API, les mots de passe, ou d'autres paramètres de configuration.
+
+- **load_dotenv** : C'est une fonction de la bibliothèque **python-dotenv**. Elle permet de charger automatiquement les variables d'environnement définies dans un fichier `.env` situé à la racine du projet ou dans un répertoire spécifié. En exécutant cette fonction au début du script, toutes les variables définies dans le fichier `.env` sont ajoutées aux variables d'environnement du système, ce qui les rend accessibles via `os.getenv` ou `os.environ` dans le code Python.
+
+Voici un exemple d'utilisation typique :
+
+1. Créez un fichier `.env` avec le contenu suivant :
+
+   ```
+   SECRET_KEY=ma_clé_secrète
+   DATABASE_URL=postgres://user:password@localhost:5432/ma_base_de_données
+   ```
+
+2. Dans votre script Python, utilisez `load_dotenv` pour charger ces variables :
+
+   ```python
+   from dotenv import load_dotenv
+   import os
+
+   # Charge les variables d'environnement à partir du fichier .env
+   load_dotenv()
+
+   # Accède aux variables d'environnement
+   secret_key = os.getenv('SECRET_KEY')
+   database_url = os.getenv('DATABASE_URL')
+
+   print(f'Secret Key: {secret_key}')
+   print(f'Database URL: {database_url}')
+   ```
+
+Ainsi, **python-dotenv** et **load_dotenv** permettent une gestion centralisée et sécurisée des configurations sensibles de l'application.
+
+
+
 
 
 

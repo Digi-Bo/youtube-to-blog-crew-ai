@@ -2,3 +2,6 @@ youtube to blog crew AI.mm
 .env
 docu.md
 venv/
+db/
+__pycache__/
+new-blog-post.md
