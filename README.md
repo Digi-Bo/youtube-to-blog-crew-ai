@@ -663,23 +663,8 @@ pip install -r requirements.txt
 - `crewai_tools` : Outils supplémentaires pour CrewAI.
 - `langchain_openai`, `langchain_community`, `langchain_huggingface` : Intégrations et outils pour utiliser les modèles de Langchain et Hugging Face.
 
-#### 2. `tools.py`
 
-**But :** Définir les outils nécessaires pour les agents.
-
-**Code :**
-```python
-from crewai_tools import YoutubeChannelSearchTool
-
-# Initialiser l'outil avec un handle spécifique de chaîne YouTube
-tool = YoutubeChannelSearchTool(youtube_channel_handle='@krishnaik06')
-```
-
-**Explication :**
-- **Importation du module** : `YoutubeChannelSearchTool` est importé depuis `crewai_tools`.
-- **Initialisation de l'outil** : Un objet `YoutubeChannelSearchTool` est créé et configuré pour rechercher des vidéos sur la chaîne YouTube spécifiée par le handle `@krishnaik06`.
-
-#### 3. `agents.py`
+#### 2. `agents.py`
 
 **But :** Définir les agents de recherche et de rédaction avec les outils appropriés.
 
@@ -688,7 +673,7 @@ tool = YoutubeChannelSearchTool(youtube_channel_handle='@krishnaik06')
 from crewai import Agent
 from tools import tool
 
-# Création d'un agent chercheur avec mémoire et mode verbeux
+# Création d'un agent récupérateur de contenu avec mémoire et mode verbeux
 researcher = Agent(
   role='Blogs Creator from Youtube Videos',
   goal='provide the relevant video suggestions for the topic {topic}',
@@ -738,14 +723,24 @@ writer = Agent(
     - `tools=[tool]` : Utilisation de l'outil de recherche de chaînes YouTube.
     - `allow_delegation=False` : Ne permet pas la délégation des tâches.
 
----
-
-Ces trois fichiers établissent les bases nécessaires pour configurer l'environnement de développement, définir les outils nécessaires pour les agents, et créer les agents avec leurs rôles et objectifs spécifiques.
 
 
 
+#### 3. `tools.py`
 
+**But :** Définir les outils nécessaires pour les agents.
 
+**Code :**
+```python
+from crewai_tools import YoutubeChannelSearchTool
+
+# Initialiser l'outil avec un handle spécifique de chaîne YouTube
+tool = YoutubeChannelSearchTool(youtube_channel_handle='@krishnaik06')
+```
+
+**Explication :**
+- **Importation du module** : `YoutubeChannelSearchTool` est importé depuis `crewai_tools`.
+- **Initialisation de l'outil** : Un objet `YoutubeChannelSearchTool` est créé et configuré pour rechercher des vidéos sur la chaîne YouTube spécifiée par le handle `@krishnaik06`.
 
 
 ## 4. `task.py`

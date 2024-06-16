@@ -1,15 +1,18 @@
-from crewai import Crew, Process 
-from tools import yt_tool
+from crewai import Crew, Process
 from agents import researcher, writer
 from tasks import research_task, write_task
 
-# Forming the tech-focused crew with some enhanced configurations
+# Formation de l'équipe technologique avec des configurations améliorées
 crew = Crew(
-agents= [researcher, writer],
-tasks=[research_task, write_task],
-process=Process.sequential, # Optional: Sequential task execution is default
-memory=True,
-cache=True,
-max _rpm=15,
-share_crew=True
+    agents=[researcher, writer],
+    tasks=[research_task, write_task],
+    process=Process.sequential,  # Optionnel : l'exécution séquentielle des tâches est par défaut
+    memory=True,
+    cache=True,
+    max_rpm=15,
+    share_crew=True
 )
+
+# Lancement du processus d'exécution des tâches avec des retours améliorés
+result = crew.kickoff(inputs={'topic': 'Agent RAG'})
+print(result)
